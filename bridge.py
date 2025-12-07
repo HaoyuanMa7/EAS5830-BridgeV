@@ -93,8 +93,8 @@ def scan_deposits(w3_source, source_contract, start_block, end_block, warden_pk,
     # Create event filter for Deposit events
     try:
         event_filter = source_contract.events.Deposit.create_filter(
-            fromBlock=start_block,
-            toBlock=end_block
+            from_block=start_block,
+            to_block=end_block
         )
         events = event_filter.get_all_entries()
     except Exception as e:
@@ -126,8 +126,8 @@ def scan_unwraps(w3_dest, dest_contract, start_block, end_block, warden_pk, cont
     # Create event filter for Unwrap events
     try:
         event_filter = dest_contract.events.Unwrap.create_filter(
-            fromBlock=start_block,
-            toBlock=end_block
+            from_block=start_block,
+            to_block=end_block
         )
         events = event_filter.get_all_entries()
     except Exception as e:
