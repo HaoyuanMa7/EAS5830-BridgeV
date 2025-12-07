@@ -23,15 +23,54 @@ contract Destination is AccessControl {
     }
 
 	function wrap(address _underlying_token, address _recipient, uint256 _amount ) public onlyRole(WARDEN_ROLE) {
-		//YOUR CODE HERE
+		// Check that the underlying token has been registered
+		require(wrapped_tokens[_underlying_token] != address(0), "Token not registered");
+		
+		// Get the wrapped token address
+		address wrapped_token = wrapped_tokens[_underlying_token];
+		
+		// Mint the wrapped tokens to the recipient
+		BridgeToken(wrapped_token).mint(_recipient, _amount);
+		
+		// Emit the Wrap event
+		emit Wrap(_underlying_token, wrapped_token, _recipient, _amount);
 	}
 
 	function unwrap(address _wrapped_token, address _recipient, uint256 _amount ) public {
-		//YOUR CODE HERE
+		// Get the underlying token address
+		address underlying_token = underlying_tokens[_wrapped_token];
+		
+		// Check that the wrapped token is valid
+		require(underlying_token != address(0), "Invalid wrapped token");
+		
+		// Burn the wrapped tokens from the caller
+		BridgeToken(_wrapped_token).burnFrom(msg.sender, _amount);
+		
+		// Emit the Unwrap event
+		emit Unwrap(underlying_token, _wrapped_token, msg.sender, _recipient, _amount);
 	}
 
 	function createToken(address _underlying_token, string memory name, string memory symbol ) public onlyRole(CREATOR_ROLE) returns(address) {
-		//YOUR CODE HERE
+		// Check that the token hasn't already been created
+		require(wrapped_tokens[_underlying_token] == address(0), "Token already exists");
+		
+		// Deploy a new BridgeToken contract
+		BridgeToken newToken = new BridgeToken(_underlying_token, name, symbol, address(this));
+		
+		// Store the mapping from underlying to wrapped token
+		wrapped_tokens[_underlying_token] = address(newToken);
+		
+		// Store the reverse mapping from wrapped to underlying token
+		underlying_tokens[address(newToken)] = _underlying_token;
+		
+		// Add to the tokens array
+		tokens.push(address(newToken));
+		
+		// Emit the Creation event
+		emit Creation(_underlying_token, address(newToken));
+		
+		// Return the address of the new token
+		return address(newToken);
 	}
 
 }
