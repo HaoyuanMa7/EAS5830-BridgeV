@@ -68,7 +68,7 @@ def scan_blocks(chain, contract_info="contract_info.json"):
     
     # Get current block number
     current_block = w3.eth.block_number
-    start_block = max(0, current_block - 5)
+    start_block = max(0, current_block - 20)  # Scan last 20 blocks to catch all recent events
     
     # Create contract instance
     contract_address = contracts['address']
@@ -175,13 +175,14 @@ def wrap_on_destination(token, recipient, amount, warden_pk, contract_info):
     account = Account.from_key(warden_pk)
     
     # Build transaction
-    nonce = w3_dest.eth.get_transaction_count(account.address)
+    nonce = w3_dest.eth.get_transaction_count(account.address, 'pending')
     
     txn = dest_contract.functions.wrap(token, recipient, amount).build_transaction({
         'from': account.address,
         'nonce': nonce,
         'gas': 300000,
-        'gasPrice': w3_dest.eth.gas_price
+        'gasPrice': w3_dest.eth.gas_price,
+        'chainId': 97
     })
     
     # Sign and send transaction
@@ -222,13 +223,14 @@ def withdraw_on_source(token, recipient, amount, warden_pk, contract_info):
     account = Account.from_key(warden_pk)
     
     # Build transaction
-    nonce = w3_source.eth.get_transaction_count(account.address)
+    nonce = w3_source.eth.get_transaction_count(account.address, 'pending')
     
     txn = source_contract.functions.withdraw(token, recipient, amount).build_transaction({
         'from': account.address,
         'nonce': nonce,
         'gas': 300000,
-        'gasPrice': w3_source.eth.gas_price
+        'gasPrice': w3_source.eth.gas_price,
+        'chainId': 43113
     })
     
     # Sign and send transaction
