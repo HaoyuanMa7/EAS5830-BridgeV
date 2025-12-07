@@ -1,13 +1,32 @@
 # EAS5830 Bridge V - Integration Assignment
 
 ## Overview
-This is the final integration assignment for the Bridge Project. The code implementation is complete, but you need to deploy the contracts and update the configuration.
+This is the final integration assignment for the Bridge Project. All smart contracts and Python bridge code are complete and ready for deployment.
 
-## What's Already Done
-✅ `bridge.py` - Complete implementation of the bridge listener and transaction sender
-✅ `contract_info.json` - Template with proper structure and ABIs
-✅ Event scanning logic for Deposit and Unwrap events
-✅ Transaction signing and sending for wrap() and withdraw() functions
+## ✅ What's Complete
+
+### Smart Contracts (Ready to Deploy)
+✅ **Source.sol** - Deposit contract for Avalanche (from Bridge III)
+- `deposit()` - Accepts ERC20 deposits and emits Deposit event
+- `withdraw()` - Releases tokens (only WARDEN_ROLE)
+- `registerToken()` - Registers approved tokens (only ADMIN_ROLE)
+
+✅ **Destination.sol** - Wrapping contract for BSC (from Bridge II)
+- `wrap()` - Mints wrapped tokens (only WARDEN_ROLE)
+- `unwrap()` - Burns wrapped tokens and emits Unwrap event
+- `createToken()` - Creates new BridgeToken (only CREATOR_ROLE)
+
+✅ **BridgeToken.sol** - ERC20 token with mint/burn capabilities
+
+### Python Bridge Implementation
+✅ **bridge.py** - Complete event listener and transaction relayer
+- `scan_blocks()` - Scans chains for events
+- `wrap_on_destination()` - Mints wrapped tokens on BSC
+- `withdraw_on_source()` - Releases tokens on Avalanche
+
+### Configuration Files
+✅ **erc20s.csv** - Token addresses for both chains (required by grader)
+✅ **contract_info.json** - Template with ABIs (needs your deployed addresses)
 
 ## What You Need To Do
 
